@@ -8,7 +8,20 @@
 
 <body onload="onInit()">
 
-    <table> <tbody></tbody> </table>
+    <h1>Mine Sweeper</h1>
+
+    <div class="smiley" onclick="onInit()"></div>
+
+    <button onclick="getBoardSize(this)">Beginner</button>
+    <button onclick="getBoardSize(this)">Medium</button>
+    <button onclick="getBoardSize(this)">Hard</button>
+
+    <div class="time">⏰: <span></span></div>
+
+   
+    <table class="field">
+        <tbody></tbody>
+    </table>
 
     <script src="js/mine-sweeper.js"></script>
     <script src="js/utils.js"></script>

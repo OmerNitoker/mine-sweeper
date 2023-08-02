@@ -1,11 +1,12 @@
 'use strict'
 
 var gBoard
+var gIsLost = false
 const gLevel = {
     SIZE: 12,
     MINES: 32
 }
-const gGame = {
+var gGame = {
     isOn: false,
     shownCount: 0,
     markedCount: 0,
@@ -14,11 +15,19 @@ const gGame = {
 const MINE = '💣'
 const FLAG = '🚩'
 
+
 function onInit() {
+    gGame = {
+        isOn: true,
+        shownCount: 0,
+        markedCount: 0,
+        secsPassed: 0
+    }
     gBoard = buildBoard();
     console.log('gBoard:', gBoard)
-
+    gIsLost = false
     renderBoard(gBoard);
+    showSmiley()
 }
 
 
@@ -31,7 +40,7 @@ function buildBoard() {
                 minesAroundCount: 0,
                 isShown: false,
                 isMine: false,
-                isMarked: false
+                isMarked: false,
             }
         }
     }
@@ -63,13 +72,8 @@ function getCellVal(cell) {
 }
 
 function onCellClicked(elCell, ev) {
-
-    if (elCell.classList.contains('clicked')) return
-    elCell.classList.add('clicked')
-    elCell.classList.remove('unclicked')
+    if (elCell.classList.contains('clicked') || elCell.classList.contains('marked')) return
     const location = getCellCoord(elCell.id)
-    console.log('location:', location)
-
     renderCell(elCell, location)
 }
 
@@ -93,8 +97,10 @@ function expandShown(board, rowIdx, colIdx) {
             if (elCell.classList.contains('clicked')) continue
             else {
                 elCell.classList.add('clicked')
-                elCell.classList.remove('unclicked')
-                const value = (currCell.minesAroundCount) ? currCell.minesAroundCount : '' 
+                gGame.shownCount++
+                console.log('count by expand:', gGame.shownCount)              ////////////////////////////
+
+                const value = (currCell.minesAroundCount) ? currCell.minesAroundCount : ''
                 elCell.innerText = value
             }
         }
@@ -116,5 +122,96 @@ function setMinesNegsCount(board, rowIdx, colIdx) {
     return count;
 }
 
+function onCellMarked(elCell, ev) {
+    ev.preventDefault()
+    if (elCell.classList.contains('clicked')) return
+    elCell.classList.toggle('marked')
+    if (elCell.classList.contains('marked')) {
+        elCell.innerText = FLAG
+        gGame.markedCount++
+        console.log('gGame.markedCount:', gGame.markedCount)
+    }
+    else {
+        elCell.innerText = ''
+        gGame.markedCount--
+    }
+}
 
+function getBoardSize(btn) {
+    if (btn.innerText === 'Beginner') {
+        gLevel.SIZE = 4
+        gLevel.MINES = 2
+    }
+    else if (btn.innerText === 'Medium') {
+        gLevel.SIZE = 8
+        gLevel.MINES = 14
+    }
+    else {
+        gLevel.SIZE = 12
+        gLevel.MINES = 32
+    }
+
+    onInit()
+}
+
+function gameLost() {
+    console.log('lost')
+
+    gIsLost = true
+    gGame.isOn = false
+    showAll()
+    showSmiley()
+    //clearInterval()
+}
+
+function gamewon() {
+    console.log('victory')
+    gGame.isOn = false
+    markAll()
+    showSmiley()
+}
+
+function showAll() {
+    for (var i = 0; i < gLevel.SIZE; i++) {
+        for (var j = 0; j < gLevel.SIZE; j++) {
+            const currCell = gBoard[i][j]
+            var elCell = document.querySelector(`#cell-${i}-${j}`)
+            if (!(elCell.classList.contains('clicked')) && !(elCell.classList.contains('marked'))) {
+                elCell.classList.add('clicked')
+                var content = currCell.minesAroundCount
+                if (currCell.minesAroundCount === 0) content = ''
+                if (currCell.isMine) content = MINE
+                elCell.innerText = content
+            }
+        }
+    }
+}
+
+function showSmiley() {
+    console.log('gIsLost:',gIsLost)
+    
+    var elSmiley = document.querySelector('.smiley')
+    if (gGame.isOn) elSmiley.innerText = '🙂'
+    else if (gIsLost) {
+        console.log('maaaaaaaaaaaaaaaaaaa')
+        
+        elSmiley.innerText = '😵‍💫'
+    }
+    else elSmiley.innerText = '🤩'
+}
+
+function checkIfWon() {
+    if (gGame.shownCount === gLevel.SIZE ** 2 - gLevel.MINES) gamewon()
+}
+
+function markAll() {
+    for (var i = 0; i < gLevel.SIZE; i++) {
+        for (var j = 0; j < gLevel.SIZE; j++) {
+            var elCell = document.querySelector(`#cell-${i}-${j}`)
+            if (elCell.classList.contains('clicked') || elCell.classList.contains('marked')) continue
+            elCell.innerText = FLAG
+            gGame.markedCount++
+        }
+    }
+}
 

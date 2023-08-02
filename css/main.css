@@ -1,13 +1,16 @@
+* {
+    text-align: center;
+}
 
 table {
     margin: auto;
+    margin-top: 20px;
+
 }
 
 .cell {
     height: 40px;
     width: 40px;
-    /* margin-left: auto;
-    margin-right: auto; */
     border: 1px solid black;
     text-align: center;
     background-color: grey;
@@ -21,7 +24,12 @@ table {
     background-color: red;
 }
 
+.time {
+    font-size: 20px;
+    margin-top: 10px;
+}
 
-
-
-
+.smiley {
+    margin-bottom: 20px;
+    cursor: pointer;
+}

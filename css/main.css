@@ -11,7 +11,7 @@ table {
 .cell {
     height: 40px;
     width: 40px;
-    border: 1px solid black;
+    border: 2px solid black;
     text-align: center;
     background-color: grey;
 }
@@ -32,4 +32,5 @@ table {
 .smiley {
     margin-bottom: 20px;
     cursor: pointer;
+    font-size: 40px;
 }

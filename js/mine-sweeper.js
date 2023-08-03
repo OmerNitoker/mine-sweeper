@@ -2,50 +2,53 @@
 
 var gBoard
 var gIsLost = false
-const gLevel = {
-    SIZE: 12,
-    MINES: 32
-}
-var gGame = {
-    isOn: false,
-    shownCount: 0,
-    markedCount: 0,
-    secsPassed: 0
-}
+var gIsWon = false
+var gGame
+var gIntervalId
 const MINE = '💣'
 const FLAG = '🚩'
-
+const gLevel = {
+    SIZE: 8,
+    MINES: 14
+}
 
 function onInit() {
     gGame = {
-        isOn: true,
+        isOn: false,
         shownCount: 0,
         markedCount: 0,
         secsPassed: 0
     }
     gBoard = buildBoard();
-    console.log('gBoard:', gBoard)
     gIsLost = false
-    renderBoard(gBoard);
+    renderTime()
+    renderBoard(gBoard); //in utils
     showSmiley()
 }
 
 
 function buildBoard() {
-    const board = [];
+    var board = [];
     for (var i = 0; i < gLevel.SIZE; i++) {
         board[i] = [];
         for (var j = 0; j < gLevel.SIZE; j++) {
             board[i][j] = {
                 minesAroundCount: 0,
-                isShown: false,
                 isMine: false,
-                isMarked: false,
             }
         }
     }
+    board = setMines(board)
+    //count neighbors
+    for (var i = 0; i < gLevel.SIZE; i++) {
+        for (var j = 0; j < gLevel.SIZE; j++) {
+            board[i][j].minesAroundCount = setMinesNegsCount(board, i, j) //func in utils
+        }
+    }
+    return board
+}
 
-    //set mines
+function setMines(board) {
     var count = gLevel.MINES
     while (count > 0) {
         const randRowIdx = getRandomInt(0, gLevel.SIZE)
@@ -54,13 +57,6 @@ function buildBoard() {
         if (currCell.isMine === true) continue
         currCell.isMine = true
         count--
-    }
-
-    //count neighbors
-    for (var i = 0; i < gLevel.SIZE; i++) {
-        for (var j = 0; j < gLevel.SIZE; j++) {
-            board[i][j].minesAroundCount = setMinesNegsCount(board, i, j) //func in utils
-        }
     }
     return board
 }
@@ -71,10 +67,11 @@ function getCellVal(cell) {
     return cell.minesAroundCount
 }
 
-function onCellClicked(elCell, ev) {
-    if (elCell.classList.contains('clicked') || elCell.classList.contains('marked')) return
+function onCellClicked(elCell) {
+    if (!gGame.isOn) startTime()
     const location = getCellCoord(elCell.id)
-    renderCell(elCell, location)
+    if (elCell.classList.contains('clicked') || elCell.classList.contains('marked')) return
+    renderCell(elCell, location) //in utils
 }
 
 function getCellCoord(strCellId) {
@@ -124,12 +121,12 @@ function setMinesNegsCount(board, rowIdx, colIdx) {
 
 function onCellMarked(elCell, ev) {
     ev.preventDefault()
+    if (gGame.shownCount === 0 && gGame.markedCount === 0) startTime()
     if (elCell.classList.contains('clicked')) return
     elCell.classList.toggle('marked')
     if (elCell.classList.contains('marked')) {
         elCell.innerText = FLAG
         gGame.markedCount++
-        console.log('gGame.markedCount:', gGame.markedCount)
     }
     else {
         elCell.innerText = ''
@@ -150,25 +147,29 @@ function getBoardSize(btn) {
         gLevel.SIZE = 12
         gLevel.MINES = 32
     }
-
+    stopTime()
     onInit()
 }
 
 function gameLost() {
-    console.log('lost')
-
     gIsLost = true
     gGame.isOn = false
     showAll()
     showSmiley()
-    //clearInterval()
+    stopTime()
+}
+
+function checkIfWon() {
+    if (gGame.shownCount === gLevel.SIZE ** 2 - gLevel.MINES) gamewon()
 }
 
 function gamewon() {
     console.log('victory')
     gGame.isOn = false
+    gIsWon = true
     markAll()
     showSmiley()
+    stopTime()
 }
 
 function showAll() {
@@ -188,20 +189,10 @@ function showAll() {
 }
 
 function showSmiley() {
-    console.log('gIsLost:',gIsLost)
-    
     var elSmiley = document.querySelector('.smiley')
-    if (gGame.isOn) elSmiley.innerText = '🙂'
-    else if (gIsLost) {
-        console.log('maaaaaaaaaaaaaaaaaaa')
-        
-        elSmiley.innerText = '😵‍💫'
-    }
-    else elSmiley.innerText = '🤩'
-}
-
-function checkIfWon() {
-    if (gGame.shownCount === gLevel.SIZE ** 2 - gLevel.MINES) gamewon()
+    if (gIsLost) elSmiley.innerText = '😵‍💫'
+    else if (gIsWon) elSmiley.innerText = '🤩'
+    else elSmiley.innerText = '🙂'
 }
 
 function markAll() {
@@ -213,5 +204,29 @@ function markAll() {
             gGame.markedCount++
         }
     }
+}
+
+function startTime() {
+    gGame.isOn = true
+    gIntervalId = setInterval(renderTime, 1000)
+}
+
+function stopTime() {
+    clearInterval(gIntervalId)
+    gIntervalId = 0
+}
+
+function renderTime() {
+    const timeCount = gGame.secsPassed
+    const mins = Math.floor(timeCount/60) < 10 ? '0' + Math.floor(timeCount/60) : Math.floor(timeCount/60)
+    const secs = timeCount%60 < 10 ? '0' + timeCount%60 : timeCount%60
+   
+    const strHTML = `${mins}:${secs}`
+
+    var elTimer = document.querySelector('.time span')
+    elTimer.innerHTML = strHTML
+
+    gGame.secsPassed++
+
 }
 

@@ -58,11 +58,11 @@ function renderBoard(board) {
     for (var j = 0; j < board.length; j++) {
       const cell = row[j]
       const cellId = `cell-${i}-${j}`
-      strHtml += `<td id="${cellId}" onclick="onCellClicked(this, event)" oncontextmenu="onCellMarked(this, event)" class="cell"></td>`
+      strHtml += `<td id="${cellId}" onclick="onCellClicked(this)" oncontextmenu="onCellMarked(this, event)" class="cell"></td>`
     }
     strHtml += '</tr>'
   }
-  const elTable = document.querySelector('table')
+  const elTable = document.querySelector('tbody')
   elTable.innerHTML = strHtml
 }
 
@@ -71,7 +71,10 @@ function renderBoard(board) {
 function renderCell(elCell, location) {
 
   const currCell = gBoard[location.i][location.j]
-  if (currCell.isMine) {
+  const valInCell = getCellVal(currCell)
+  console.log('valInCell:',valInCell)
+  
+  if (valInCell === MINE) {
     elCell.innerText = MINE
     elCell.classList.add('boom')
     gameLost()
@@ -80,11 +83,8 @@ function renderCell(elCell, location) {
 
   elCell.classList.add('clicked')
   gGame.shownCount++
-  console.log('count by click', gGame.shownCount)                 //////////////////////////////////////
-
-  const value = currCell.minesAroundCount ? currCell.minesAroundCount : ''
-  elCell.innerText = value
-  if (value === '') expandShown(gBoard, location.i, location.j)
+  elCell.innerText = valInCell
+  if (valInCell === '') expandShown(gBoard, location.i, location.j)
   checkIfWon()
 }
 

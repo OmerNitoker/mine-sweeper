@@ -3,13 +3,12 @@
 }
 
 body {
-    background-color: blueviolet;
+    background-color: rgb(204, 155, 176);
 }
 
 table {
     margin: auto;
-    margin-top: 20px;
-
+    border: solid 2px black;
 }
 
 .cell {
@@ -17,7 +16,7 @@ table {
     width: 40px;
     border: 2px solid black;
     text-align: center;
-    background-color: grey;
+    background-color: rgb(199, 146, 146);
 }
 
 .clicked {
@@ -28,13 +27,40 @@ table {
     background-color: red;
 }
 
-.time {
-    font-size: 25px;
-    margin-top: 10px;
-}
-
 .smiley {
     margin-bottom: 20px;
     cursor: pointer;
     font-size: 40px;
+}
+
+button {
+    cursor: pointer;
+    width: 100px;
+    height: 50px;
+    padding: 5px;
+    border: solid 2px black;
+    border-radius: 10px;
+    font-size: 20px;
+}
+
+.time {
+    position: relative;
+    left: 180px;
+    font-size: 25px;
+    top: 25px;
+    margin-right: 5px;
+}
+
+.lifes {
+    position: relative;
+    right: 180px;
+    bottom: 10px;
+    font-size: 25;  
+}
+
+.flags-left {
+    position: relative;
+    bottom: 43px;
+    font-size: 25;
+    font-weight: bold;
 }

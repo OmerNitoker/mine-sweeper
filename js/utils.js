@@ -18,20 +18,6 @@
 // }
 
 
-function setMinesNegsCount(board, rowIdx, colIdx) {
-  var count = 0;
-  for (var i = rowIdx - 1; i <= rowIdx + 1; i++) {
-    if (i < 0 || i >= board.length) continue;
-    for (var j = colIdx - 1; j <= colIdx + 1; j++) {
-      if (i === rowIdx && j === colIdx) continue;
-      if (j < 0 || j >= board[0].length) continue;
-      var currCell = board[i][j];
-      if (currCell.isMine) count++;
-    }
-  }
-  return count;
-}
-
 // function getEmptyCells(board) {
 //   var emptyCells = [];
 //   for (var i = 0; i < board.length; i++) {
@@ -72,20 +58,26 @@ function renderCell(elCell, location) {
 
   const currCell = gBoard[location.i][location.j]
   const valInCell = getCellVal(currCell)
-  console.log('valInCell:',valInCell)
-  
-  if (valInCell === MINE) {
-    elCell.innerText = MINE
-    elCell.classList.add('boom')
-    gameLost()
-    return
-  }
 
-  elCell.classList.add('clicked')
-  gGame.shownCount++
-  elCell.innerText = valInCell
-  if (valInCell === '') expandShown(gBoard, location.i, location.j)
-  checkIfWon()
+  if (valInCell === MINE) {
+    console.log('gLifes:', gLifes)                                         //////////////////////////
+    elCell.innerText = MINE
+    if (gLifes === 1) {
+      elCell.classList.add('boom')
+      gameLost()
+      return
+    }
+    setTimeout(showNone, 1000, elCell)
+    gLifes--
+    console.log('gLifes:', gLifes)                                         //////////////////////////
+  }
+  else {
+    elCell.classList.add('clicked')
+    gGame.shownCount++
+    elCell.innerText = valInCell
+    if (valInCell === '') expandShown(gBoard, location.i, location.j)
+    checkIfWon()
+  }
 }
 
 /////////////////////////////////////////

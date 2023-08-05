@@ -32,6 +32,7 @@ function renderCell(elCell, location) {
   }
   else {
     elCell.classList.add('clicked')
+    currCell.isShown = true
     gGame.shownCount++
     elCell.innerText = valInCell
     if (valInCell === '') expandShown(gBoard, location.i, location.j)

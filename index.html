@@ -10,17 +10,37 @@
 
     <div class="smiley" onclick="onInit()"></div>
 
-    <button class="btn1" onclick="getBoardSize(this)">Beginner</button>
-    <button class="btn2" onclick="getBoardSize(this)">Medium</button>
-    <button class="btn3" onclick="getBoardSize(this)">Hard</button>
+    <button class="size size1" onclick="getBoardSize(this)">Beginner</button>
+    <button class="size size2" onclick="getBoardSize(this)">Medium</button>
+    <button class="size size3" onclick="getBoardSize(this)">Hard</button>
+
 
     <div class="time">🕰️ <span></span></div>
-    <div class="lifes"> 
+    <div class="lifes">
         <span class="heart3">&#10084;&#65039;</span>
         <span class="heart2">&#10084;&#65039;</span>
         <span class="heart1">&#10084;&#65039;</span>
     </div>
     <div class="flags-left">🚩 <span></span></div>
+    <div class="hints">
+        <span class="hint hint1" onclick="hintActivate(this)">💡</span>
+        <span class="hint hint2" onclick="hintActivate(this)">💡</span>
+        <span class="hint hint3" onclick="hintActivate(this)">💡</span>
+    </div>
+    <button class="safe-clicks" onclick="showSafeClick(gBoard)"> Safe clicks: X <span>3</span></button>
+    <button class="manual" onclick="manualInit()">Manual mode</button>
+    <button class="mega-hint" onclick="megaHintInit()">Mega hint</button>
+    <div class="manual-modal hide">
+        <h2>Manual mode</h2>
+        <p>Position the mines yourself!</p>
+        <p>when finished, press <span onclick="playManual()">here</span> and start playing</p>
+    </div>
+    <div class="mega-modal hide">
+        <h2>Mega hint</h2>
+        <h3>Show area</h3>
+        <p>Click the area's <span>top left</span> cell</p>
+    </div>
+
 
     <table>
         <tbody></tbody>
